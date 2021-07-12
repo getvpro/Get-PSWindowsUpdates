@@ -49,14 +49,14 @@ IF (-not([System.Diagnostics.EventLog]::SourceExists("$EventIDSrc"))) {
 
 }
 
-IF (!(Get-PackageProvider -ListAvailable nuget) ) {
+IF (!(Get-PackageProvider -ListAvailable nuget -ErrorAction SilentlyContinues) ) {
 
     Install-PackageProvider -Name NuGet -Force
     Write-EventLog -LogName SYSTEM -Source $EventIDSrc -EventId 0 -EntryType INFO -Message "The Nuget package manager will be installed"
 
 }
 
-IF (!(Get-Module -ListAvailable -Name PSWindowsUpdate)) {
+IF (!(Get-Module -ListAvailable -Name PSWindowsUpdate -ErrorAction SilentlyContinue)) {
 
     Install-module pswindowsupdate -force
     Write-host "The PSWindowsUpdate module will be installed" -foregroundcolor cyan
@@ -76,7 +76,8 @@ IF  ($Updates -ne $Null) {
 
     Write-EventLog -LogName SYSTEM -Source $EventIDSrc -EventId 0 -EntryType INFO -Message "The following windows updates will be installed `n $($Updates | Out-String)"
     
-    Get-WUInstall -MicrosoftUpdate -AcceptAll -UpdateType Software -Install -AutoReboot    
+    Get-WUInstall -MicrosoftUpdate -AcceptAll -UpdateType Software -Install -AutoReboot
+}
     
 Else {
 
